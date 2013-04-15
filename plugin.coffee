@@ -1,49 +1,49 @@
-
 less = require 'less'
 path = require 'path'
 async = require 'async'
 fs = require 'fs'
 
-module.exports = (wintersmith, callback) ->
+module.exports = (env, callback) ->
 
-  class LessPlugin extends wintersmith.ContentPlugin
+  class LessPlugin extends env.ContentPlugin
 
-    constructor: (@_filename, @_base, @_source) ->
+    constructor: (@filepath, @source) ->
 
     getFilename: ->
-      @_filename.replace /less$/, 'css'
+      @filepath.relative.replace /less$/, 'css'
 
-    render: (locals, contents, templates, callback) ->
-      options =
-        filename: @_filename
-        paths: [path.dirname(path.join(@_base, @_filename))]
-      # less throws errors all over the place...
-      async.waterfall [
-        (callback) ->
-          try
-            parser = new less.Parser options
-            callback null, parser
-          catch error
-            callback error
-        (parser, callback) =>
-          try
-            parser.parse @_source, callback
-          catch error
-            callback error
-        (root, callback) ->
-          try
-            result = root.toCSS options
-            callback null, new Buffer result
-          catch error
-            callback error
-      ], callback
+    getView: ->
+      return (env, locals, contents, templates, callback) ->
+        options = env.config.less or {}
+        options.filename = @filepath.relative
+        options.paths = [path.dirname(@filepath.full)]
+        # less throws errors all over the place...
+        async.waterfall [
+          (callback) ->
+            try
+              parser = new less.Parser options
+              callback null, parser
+            catch error
+              callback error
+          (parser, callback) =>
+            try
+              parser.parse @source, callback
+            catch error
+              callback error
+          (root, callback) ->
+            try
+              result = root.toCSS options
+              callback null, new Buffer result
+            catch error
+              callback error
+        ], callback
 
-  LessPlugin.fromFile = (filename, base, callback) ->
-    fs.readFile path.join(base, filename), (error, buffer) ->
+  LessPlugin.fromFile = (filepath, callback) ->
+    fs.readFile filepath.full, (error, buffer) ->
       if error
         callback error
       else
-        callback null, new LessPlugin filename, base, buffer.toString()
+        callback null, new LessPlugin filepath, buffer.toString()
 
-  wintersmith.registerContentPlugin 'styles', '**/*.less', LessPlugin
+  env.registerContentPlugin 'styles', '**/*.less', LessPlugin
   callback()
