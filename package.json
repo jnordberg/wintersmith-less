@@ -1,9 +1,14 @@
 {
   "name": "wintersmith-less",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "author": "Johan Nordberg <its@johan-nordberg.com>",
   "description": "less plugin for witnersmith",
   "license": "MIT",
+  "keywords": [
+    "wintersmith",
+    "wintersmith-plugin"
+    "less"
+  ],
   "dependencies": {
     "less": "1.4.x",
     "async": ">= 0.0.1",
