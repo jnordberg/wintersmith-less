@@ -6,7 +6,7 @@
   "license": "MIT",
   "keywords": [
     "wintersmith",
-    "wintersmith-plugin"
+    "wintersmith-plugin",
     "less"
   ],
   "dependencies": {
