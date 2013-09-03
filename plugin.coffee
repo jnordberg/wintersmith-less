@@ -21,6 +21,12 @@ mapD = (d,f) ->
 # Returns an empty dict for numbers,null and undef
 clone = (d) ->
   mapD d, (k,v)->v
+
+#
+# Concat arrays functional style
+conc = (a...) ->
+  [].concat a...
+
 module.exports = (env, callback) ->
 
   class LessPlugin extends env.ContentPlugin
@@ -34,7 +40,10 @@ module.exports = (env, callback) ->
       return (env, locals, contents, templates, callback) ->
         options = clone env.config.less
         options.filename = @filepath.relative
-        options.paths = [path.dirname(@filepath.full)]
+        options.paths = conc \
+          (options.paths or []),
+          (path.dirname @filepath.full)
+
         # less throws errors all over the place...
         async.waterfall [
           (callback) ->
