@@ -3,6 +3,24 @@ path = require 'path'
 async = require 'async'
 fs = require 'fs'
 
+#
+# Map function for dictionarys:
+# Iterate over each K/V-pair of the dict
+# and return a new dict in which the values
+# are the return value of the function:
+#
+# mapD {a:1,b:2,c:3,d:"v"}, (k,v) -> v*2
+# ==> {a:2,b:4,c:6,d:NaN}
+mapD = (d,f) ->
+  r = {}
+  for k,v of d
+    r[k] = f k, v
+  r
+
+# Generate a shallow copy of the argument
+# Returns an empty dict for numbers,null and undef
+clone = (d) ->
+  mapD d, (k,v)->v
 module.exports = (env, callback) ->
 
   class LessPlugin extends env.ContentPlugin
@@ -14,7 +32,7 @@ module.exports = (env, callback) ->
 
     getView: ->
       return (env, locals, contents, templates, callback) ->
-        options = env.config.less or {}
+        options = clone env.config.less
         options.filename = @filepath.relative
         options.paths = [path.dirname(@filepath.full)]
         # less throws errors all over the place...
