@@ -44,6 +44,14 @@ module.exports = (env, callback) ->
           (options.paths or []),
           (path.dirname @filepath.full)
 
+        # Setup variables
+        # TODO: Autodetection of types like color…?
+        vars = mapD options.vars, (k,v) ->
+          if v.value
+            v
+          else
+            new less.tree.Anonymous v
+
         # less throws errors all over the place...
         async.waterfall [
           (callback) ->
@@ -59,7 +67,7 @@ module.exports = (env, callback) ->
               callback error
           (root, callback) ->
             try
-              result = root.toCSS options
+              result = root.toCSS options, vars
               callback null, new Buffer result
             catch error
               callback error
