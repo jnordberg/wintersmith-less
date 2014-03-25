@@ -1,8 +1,8 @@
 {
   "name": "wintersmith-less",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "author": "Johan Nordberg <its@johan-nordberg.com>",
-  "description": "less plugin for witnersmith",
+  "description": "less plugin for wintersmith",
   "license": "MIT",
   "keywords": [
     "wintersmith",
@@ -12,6 +12,6 @@
   "dependencies": {
     "less": "1.4.x",
     "async": ">= 0.0.1",
-    "coffee-script": ">=1.3"
+    "coffee-script": ">=1.7"
   }
 }
