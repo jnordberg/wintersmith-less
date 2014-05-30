@@ -10,7 +10,7 @@
     "less"
   ],
   "dependencies": {
-    "less": "1.4.x",
+    "less": "~1.7.0",
     "async": ">= 0.0.1",
     "coffee-script": ">=1.7",
     "lodash": "~2.4.1"
