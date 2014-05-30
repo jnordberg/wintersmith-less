@@ -21,7 +21,7 @@ module.exports = (env, callback) ->
           options.paths = (path.resolve(loc) for loc in options.paths)
         else
           options.paths = []
-        options.paths = _.union options.paths [path.dirname(@filepath.full)]
+        options.paths = _.union options.paths, [path.dirname(@filepath.full)]
         # less throws errors all over the place...
         async.waterfall [
           (callback) ->
