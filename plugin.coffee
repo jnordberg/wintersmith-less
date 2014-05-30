@@ -2,6 +2,7 @@ less = require 'less'
 path = require 'path'
 async = require 'async'
 fs = require 'fs'
+_ = require 'lodash'
 
 module.exports = (env, callback) ->
 
@@ -14,9 +15,13 @@ module.exports = (env, callback) ->
 
     getView: ->
       return (env, locals, contents, templates, callback) ->
-        options = env.config.less or {}
+        options = if env.config.less then _.cloneDeep env.config.less else {}
         options.filename = @filepath.relative
-        options.paths = [path.dirname(@filepath.full)]
+        if options.paths
+          options.paths = (path.resolve(loc) for loc in options.paths)
+        else
+          options.paths = []
+        options.paths = _.union options.paths, [path.dirname(@filepath.full)]
         # less throws errors all over the place...
         async.waterfall [
           (callback) ->
