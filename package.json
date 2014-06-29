@@ -1,6 +1,6 @@
 {
   "name": "wintersmith-less",
-  "version": "0.2.2",
+  "version": "0.2.3",
   "author": "Johan Nordberg <its@johan-nordberg.com>",
   "description": "less plugin for wintersmith",
   "license": "MIT",
