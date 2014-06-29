@@ -45,5 +45,5 @@ module.exports = (env, callback) ->
       else
         callback null, new LessPlugin filepath, buffer.toString()
 
-  env.registerContentPlugin 'styles', '**/*.less', LessPlugin
+  env.registerContentPlugin 'styles', '**/[^\_]*.less', LessPlugin
   callback()
