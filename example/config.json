@@ -1,4 +1,7 @@
 {
   "plugins": ["./../"],
-  "locals": {}
+  "locals": {},
+  "less": {
+  	"exclude": ["style/elements.less"]
+  }
 }
