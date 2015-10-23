@@ -5,6 +5,16 @@ fs = require 'fs'
 
 module.exports = (env, callback) ->
 
+  options = env.config.less ? {}
+
+  if env.mode is 'preview' and !options.sourceMap?
+    options.sourceMap =
+      sourceMapFileInline: true
+      outputSourceFiles: true
+
+  exclude = options.exclude ? []
+  delete options['excluded']
+
   class LessPlugin extends env.ContentPlugin
 
     constructor: (@filepath, @source) ->
@@ -12,31 +22,28 @@ module.exports = (env, callback) ->
     getFilename: ->
       @filepath.relative.replace /less$/, 'css'
 
+    isExcluded: ->
+      path.basename(@filepath.relative)[0] is '_' or @filepath.relative in exclude
+
     getView: ->
+      if @isExcluded()
+        return 'none'
       return (env, locals, contents, templates, callback) ->
-        options = env.config.less or {}
-        options.filename = @filepath.relative
-        options.paths = [path.dirname(@filepath.full)]
-        # less throws errors all over the place...
-        async.waterfall [
-          (callback) ->
-            try
-              parser = new less.Parser options
-              callback null, parser
-            catch error
-              callback error
-          (parser, callback) =>
-            try
-              parser.parse @source, callback
-            catch error
-              callback error
-          (root, callback) ->
-            try
-              result = root.toCSS options
-              callback null, new Buffer result
-            catch error
-              callback error
-        ], callback
+        opts = {}
+        env.utils.extend opts, options
+        opts.paths = [path.dirname(@filepath.full)]
+        opts.filename = @filepath.relative
+        less.render @source, opts, (error, result) ->
+          if error?
+            callback error
+            return
+          callback null, new Buffer result.css
+
+    getPluginInfo: ->
+      if @isExcluded()
+        return 'excluded'
+      else
+        super()
 
   LessPlugin.fromFile = (filepath, callback) ->
     fs.readFile filepath.full, (error, buffer) ->
@@ -45,5 +52,5 @@ module.exports = (env, callback) ->
       else
         callback null, new LessPlugin filepath, buffer.toString()
 
-  env.registerContentPlugin 'styles', '**/[^\_]*.less', LessPlugin
+  env.registerContentPlugin 'styles', '**/*.less', LessPlugin
   callback()
