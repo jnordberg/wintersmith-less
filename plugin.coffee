@@ -1,5 +1,6 @@
 less = require 'less'
 path = require 'path'
+minimatch = require 'minimatch'
 async = require 'async'
 fs = require 'fs'
 
@@ -23,7 +24,8 @@ module.exports = (env, callback) ->
       @filepath.relative.replace /less$/, 'css'
 
     isExcluded: ->
-      path.basename(@filepath.relative)[0] is '_' or @filepath.relative in exclude
+      path.basename(@filepath.relative)[0] is '_' or
+        true in (minimatch(@filepath.relative, pattern) for pattern in exclude)
 
     getView: ->
       if @isExcluded()
