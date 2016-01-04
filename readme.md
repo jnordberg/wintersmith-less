@@ -19,9 +19,9 @@ Add a less key to your wintersmith config, all options are passed directly to th
 {
 	"less": {
 		"exclude": [
-            "styles/configuration.less",
-            "vendor/**/*"
-        ]
+			"styles/configuration.less",
+			"vendor/**/*"
+		]
 	}
 }
 ```
